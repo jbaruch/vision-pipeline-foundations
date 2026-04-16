@@ -132,6 +132,10 @@ Wire an "am I really seeing frames?" probe into the startup sequence and
 print wall-clock milestones. Invisible 5-second camera init while the audience
 watches a blank terminal is the worst possible way to open a talk.
 
+## Reference implementation
+
+[`scripts/camera_setup.py`](../../scripts/camera_setup.py) — `open_camera(index)`, `probe_indices()`, and `capture_to_disk()`. Import directly instead of re-implementing.
+
 ## Related
 
 - `frame-skip-policy` — how to balance per-frame work against inference cost
