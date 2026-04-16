@@ -1,0 +1,26 @@
+{
+  "context": "Tests plugin-specific knowledge for USB webcam black-frame recovery on macOS: the non-obvious namedWindow+imshow+waitKey event-loop pump, the precise 1.0s warmup sleep, the >30 mean brightness threshold, and the DJI Osmo resolution constraint. Baseline agents score 0% on these because they are not general OpenCV knowledge.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "namedWindow + imshow + waitKey event-loop pump",
+      "max_score": 30,
+      "description": "Code calls cv2.namedWindow, cv2.imshow, and cv2.waitKey(30) (directly or via open_camera helper) to pump the macOS event loop for USB webcam compatibility. Without this trio, USB cameras return dark frames on macOS. This is the key non-obvious insight."
+    },
+    {
+      "name": "1.0s warmup sleep (not 0.5s)",
+      "max_score": 25,
+      "description": "The warmup sleep duration after VideoCapture open is exactly 1.0 seconds — not 0.5s, not omitted. USB cameras need the full second to auto-expose. Either via open_camera helper or explicitly in custom code."
+    },
+    {
+      "name": "Frame mean threshold > 30",
+      "max_score": 20,
+      "description": "Probes frames in a loop and only proceeds when frame.mean() > 30 (not > 10, not absent). The threshold of 30 is specifically tuned for USB camera auto-exposure recovery."
+    },
+    {
+      "name": "No cap.set resolution on DJI Osmo",
+      "max_score": 25,
+      "description": "Script does NOT call cap.set(cv2.CAP_PROP_FRAME_WIDTH) or cap.set(cv2.CAP_PROP_FRAME_HEIGHT) anywhere. On DJI Osmo cameras, setting resolution resets the zoom and causes erratic behavior."
+    }
+  ]
+}

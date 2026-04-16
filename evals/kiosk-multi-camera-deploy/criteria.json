@@ -1,0 +1,26 @@
+{
+  "context": "Tests plugin-specific knowledge for multi-camera kiosk deployment on macOS: the critical constraint that only one process can hold the camera, the capture_to_disk pattern where the parent captures and workers read from disk, and the DJI Osmo resolution constraint. Baseline agents try to open cameras in worker subprocesses and fail.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "No VideoCapture in subprocess workers",
+      "max_score": 30,
+      "description": "Worker functions (any code running in multiprocessing Pool, Process, or subprocess) do NOT call cv2.VideoCapture(). Only the parent process opens the camera. This is the key macOS constraint — one process holds the camera."
+    },
+    {
+      "name": "capture_to_disk pattern",
+      "max_score": 25,
+      "description": "Uses the capture_to_disk pattern: the parent process captures frames and writes them to disk, worker processes read frame files from disk for processing. Either via the capture_to_disk() helper or equivalent custom implementation."
+    },
+    {
+      "name": "Comment explains single-process camera constraint",
+      "max_score": 20,
+      "description": "An inline comment or docstring explains WHY workers read from disk instead of opening the camera: macOS restricts camera access to a single process. The knowledge of this constraint is what the plugin teaches."
+    },
+    {
+      "name": "No cap.set resolution on DJI Osmo",
+      "max_score": 25,
+      "description": "Script does NOT call cap.set(cv2.CAP_PROP_FRAME_WIDTH) or cap.set(cv2.CAP_PROP_FRAME_HEIGHT) anywhere. On DJI Osmo cameras, setting resolution resets the zoom and causes erratic behavior."
+    }
+  ]
+}

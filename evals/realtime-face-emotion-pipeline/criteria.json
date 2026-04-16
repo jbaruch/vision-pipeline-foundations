@@ -1,0 +1,31 @@
+{
+  "context": "Tests plugin-specific skip-rate constants and gating logic for the real-time face+emotion pipeline. The exact values (face=3, emotion=10) are non-obvious tuning parameters from the plugin. Baseline agents guess wrong values or use time-based gating. General practices like downscaling, reading every frame, and JSON output are excluded.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "Face recognition skip = EXACTLY 3",
+      "max_score": 25,
+      "description": "A named constant for face recognition skip interval is defined and its value is exactly 3 (e.g. FACE_RECOGNITION_EVERY = 3). Not 2, not 5 — exactly 3."
+    },
+    {
+      "name": "Emotion classification skip = EXACTLY 10",
+      "max_score": 25,
+      "description": "A named constant for emotion classification skip interval is defined and its value is exactly 10 (e.g. EMOTION_EVERY = 10). Not 5, not 15 — exactly 10."
+    },
+    {
+      "name": "Modulo counter gating (not time-based)",
+      "max_score": 20,
+      "description": "Both skip checks use `frame_count % CONSTANT == 0` (modulo of a frame counter), not a time-based check like time.time() or datetime. The modulo pattern is specified by the plugin."
+    },
+    {
+      "name": "Emotion guarded by face presence",
+      "max_score": 15,
+      "description": "Emotion classification is only called when a face crop or face detection result is available from the current or recent frame (guarded by a non-None / truthy check). The plugin specifies emotion runs only when faces are detected."
+    },
+    {
+      "name": "Different rates for face vs emotion",
+      "max_score": 15,
+      "description": "Face recognition and emotion classification fire at demonstrably different frequencies — emotion fires less often (every 10) than face recognition (every 3). Both constants must be present and distinct."
+    }
+  ]
+}
