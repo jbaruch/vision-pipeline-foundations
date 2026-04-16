@@ -1,10 +1,14 @@
 # Vision Pipeline Foundations Rules
 
-Hygiene for OpenCV + dlib CV pipelines.
+Hard constraints for OpenCV + dlib CV pipelines on macOS.
 
 ## Camera setup (→ `camera-setup` skill)
-- **`cv2.VideoCapture(i)` returning OK + black frames is normal on macOS** — wait 0.5 s after open and probe for real frames before entering the main loop.
-- **Virtual cameras sit on low indices.** Insta360, Snap Camera, OBS Virtual Camera. Skip any index where `frame.mean() < 10`.
+- **USB webcams on macOS need the event loop.** `cv2.namedWindow` + `cv2.imshow` + `cv2.waitKey(30)` on every frame. Without this, USB cameras (DJI Osmo, Logitech) return dark frames silently.
+- **Wait 1.0 s after `cv2.VideoCapture()`** before first real read. 0.5 s is NOT enough for USB webcams.
+- **Probe until `frame.mean() > 30`** before starting inference. Some cameras return 5–20 dark warmup frames.
+- **NEVER `cap.set(FRAME_WIDTH/HEIGHT)` on DJI Osmo.** Resets digital zoom and exposure to defaults.
+- **NEVER share a camera across subprocesses on macOS.** Only one process can hold a VideoCapture. Parent owns camera, sub-agents read from disk/shared state.
+- **Virtual cameras sit on low indices.** Insta360, Snap Camera, OBS Virtual Camera — skip any index where `frame.mean() < 10`.
 - **Probe, don't hardcode.** Plugging in a USB webcam reshuffles indices.
 - **macOS camera app list:** `system_profiler SPCameraDataType`.
 
