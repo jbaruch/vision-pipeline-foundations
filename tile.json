@@ -1,0 +1,19 @@
+{
+  "name": "jbaruch/vision-pipeline-foundations",
+  "version": "0.1.0",
+  "summary": "Hygiene patterns for any OpenCV + dlib vision pipeline: camera index probing + macOS init quirks, warmup that verifies real frames, frame-skip policy for expensive inference.",
+  "private": false,
+  "rules": {
+    "vision-pipeline-foundations-rules": {
+      "rules": "rules/vision-pipeline-foundations-rules.md"
+    }
+  },
+  "skills": {
+    "camera-setup": {
+      "path": "skills/camera-setup/SKILL.md"
+    },
+    "frame-skip-policy": {
+      "path": "skills/frame-skip-policy/SKILL.md"
+    }
+  }
+}
